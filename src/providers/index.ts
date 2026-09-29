@@ -8,7 +8,6 @@
  *
  * @packageDocumentation
  */
-export type { AddressParts } from '../address';
 export { providers } from './data';
 export { getProvider } from './lookup';
 export type { ProviderId, ProviderInfo, ProviderKind } from './types';

@@ -1,4 +1,5 @@
-import { localOf, type AddressParts } from './address';
+import type { ParsedAddress } from '@email-utils/validator-syntax';
+import { partsOf } from './address';
 
 // Local parts that name a function rather than a person. Lowercase, with
 // each common spelling listed, since a lookup is cheaper than folding
@@ -80,11 +81,12 @@ const roleLocalParts: ReadonlySet<string> = new Set([
  *
  * @throws TypeError when `email` is neither a string nor a parsed address.
  */
-export function isRoleAccount(email: string | AddressParts): boolean {
-  const local = localOf(email);
-  if (local === undefined) {
+export function isRoleAccount(email: string | ParsedAddress): boolean {
+  const parts = partsOf(email);
+  if (parts === undefined) {
     return false;
   }
+  const { local } = parts;
   const plus = local.indexOf('+');
   return roleLocalParts.has(
     (plus === -1 ? local : local.slice(0, plus)).toLowerCase(),

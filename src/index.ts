@@ -9,7 +9,6 @@
  * @packageDocumentation
  */
 
-export type { AddressParts } from './address';
 export { getProvider } from './providers/lookup';
 export type { ProviderId, ProviderInfo, ProviderKind } from './providers/types';
 export { isRoleAccount } from './role';

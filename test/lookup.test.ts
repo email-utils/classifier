@@ -1,9 +1,14 @@
+import type { ParsedAddress } from '@email-utils/validator-syntax';
 import { describe, expect, it } from 'vitest';
-import { getProvider, isRoleAccount, type AddressParts } from '../src';
+import { getProvider, isRoleAccount } from '../src';
 import * as providersEntry from '../src/providers';
 
-function providerId(email: string | AddressParts): string | undefined {
+function providerId(email: string | ParsedAddress): string | undefined {
   return getProvider(email)?.id;
+}
+
+function parsed(local: string, domain: string): ParsedAddress {
+  return { local, domain, comments: [] };
 }
 
 describe('getProvider', () => {
@@ -39,20 +44,26 @@ describe('getProvider', () => {
     expect(getProvider('ada@.fastmail.com')).toBeUndefined();
   });
 
-  it('splits at the last @, so a quoted @ stays in the local part', () => {
-    expect(providerId('"a@b"@gmail.com')).toBe('gmail');
-    expect(getProvider('ada@gmail.com@example.com')).toBeUndefined();
-  });
-
-  it('knows nothing of a string it cannot split', () => {
-    for (const email of ['', 'ada', 'ada@', '@gmail.com', '@']) {
+  it('knows nothing of a string the practical preset rejects', () => {
+    for (const email of [
+      '',
+      'ada',
+      'ada@',
+      '@gmail.com',
+      '@',
+      '"a@b"@gmail.com',
+      'ada@gmail.com@example.com',
+      ' ada@gmail.com',
+    ]) {
       expect(getProvider(email)).toBeUndefined();
     }
   });
 
   it('takes an address that is already parsed', () => {
-    expect(providerId({ local: 'ada', domain: 'GMAIL.com' })).toBe('gmail');
-    expect(getProvider({ local: '', domain: 'gmail.com' })).toBeUndefined();
+    expect(providerId(parsed('ada', 'GMAIL.com'))).toBe('gmail');
+    expect(getProvider(parsed('', 'gmail.com'))).toBeUndefined();
+    expect(getProvider(parsed('ada', 'localhost'))).toBeUndefined();
+    expect(getProvider(parsed('ada', '.fastmail.com'))).toBeUndefined();
   });
 
   it('is exported from /providers too', () => {
@@ -95,16 +106,15 @@ describe('isRoleAccount', () => {
     }
   });
 
-  it('is false for a string it cannot split', () => {
+  it('is false for a string the practical preset rejects', () => {
     expect(isRoleAccount('admin')).toBe(false);
     expect(isRoleAccount('admin@')).toBe(false);
+    expect(isRoleAccount('"admin"@example.com')).toBe(false);
   });
 
   it('takes an address that is already parsed', () => {
-    expect(isRoleAccount({ local: 'Postmaster', domain: 'example.com' })).toBe(
-      true,
-    );
-    expect(isRoleAccount({ local: 'admin', domain: '' })).toBe(false);
+    expect(isRoleAccount(parsed('Postmaster', 'example.com'))).toBe(true);
+    expect(isRoleAccount(parsed('admin', ''))).toBe(false);
   });
 });
 
