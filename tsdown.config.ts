@@ -1,7 +1,12 @@
 import { defineConfig, type UserConfig } from 'tsdown';
 
 const config: UserConfig = defineConfig({
-  entry: ['src/index.ts'],
+  // `providers` is the registry; `sources` cites it, for the docs.
+  entry: {
+    index: 'src/index.ts',
+    providers: 'src/providers/index.ts',
+    sources: 'src/sources/index.ts',
+  },
   format: ['esm', 'cjs'],
   // 'neutral' for packages that run in browsers, Deno, Bun and edge runtimes;
   // 'node' only for packages that need Node APIs (validator-dns).

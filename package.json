@@ -26,6 +26,14 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
+    "./providers": {
+      "import": "./dist/providers.mjs",
+      "require": "./dist/providers.cjs"
+    },
+    "./sources": {
+      "import": "./dist/sources.mjs",
+      "require": "./dist/sources.cjs"
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
@@ -45,7 +53,7 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "bench": "vitest bench --run",
-    "check:package": "publint && attw --pack .",
+    "check:package": "publint && attw --pack . --profile node16",
     "pre-commit": "npm run lint && npm run format:check && npm run typecheck",
     "prepack": "npm run build"
   },
