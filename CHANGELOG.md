@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0-rc.2](https://github.com/email-utils/classifier/compare/v1.0.0-rc.1...v1.0.0-rc.2) (2026-09-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* parse string input with validator-syntax's parseAddress ([#28](https://github.com/email-utils/classifier/issues/28))
+
+### Features
+
+* parse string input with validator-syntax's parseAddress ([#28](https://github.com/email-utils/classifier/issues/28)) ([4a87cf0](https://github.com/email-utils/classifier/commit/4a87cf02928794ddf5ec626264bc994276fee979))
+
 ## [1.0.0-rc.1](https://github.com/email-utils/classifier/compare/v1.0.0-rc.0...v1.0.0-rc.1) (2026-09-29)
 
 
