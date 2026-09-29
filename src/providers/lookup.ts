@@ -1,4 +1,5 @@
-import { domainOf, type AddressParts } from '../address';
+import type { ParsedAddress } from '@email-utils/validator-syntax';
+import { partsOf } from '../address';
 import { providers } from './data';
 import type { ProviderInfo } from './types';
 
@@ -28,12 +29,13 @@ function domainIndex(): ReadonlyMap<string, ProviderInfo> {
  * @throws TypeError when `email` is neither a string nor a parsed address.
  */
 export function getProvider(
-  email: string | AddressParts,
+  email: string | ParsedAddress,
 ): ProviderInfo | undefined {
-  const domain = domainOf(email);
-  if (domain === undefined) {
+  const parts = partsOf(email);
+  if (parts === undefined) {
     return undefined;
   }
+  const domain = parts.domain.toLowerCase();
   const index = domainIndex();
   const provider = index.get(domain);
   if (provider !== undefined) {
