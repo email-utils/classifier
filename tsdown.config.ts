@@ -2,12 +2,14 @@ import { defineConfig, type UserConfig } from 'tsdown';
 
 const config: UserConfig = defineConfig({
   // `providers` is the registry; `sources` cites it, for the docs.
-  // `disposable` carries the vendored blocklist, which the root never loads.
+  // `disposable` carries the vendored blocklist, which the root never loads,
+  // and `classify` imports it.
   entry: {
     index: 'src/index.ts',
     providers: 'src/providers/index.ts',
     sources: 'src/sources/index.ts',
     disposable: 'src/disposable/index.ts',
+    classify: 'src/classify/index.ts',
   },
   format: ['esm', 'cjs'],
   // 'neutral' for packages that run in browsers, Deno, Bun and edge runtimes;

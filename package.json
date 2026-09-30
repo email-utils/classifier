@@ -38,6 +38,10 @@
       "import": "./dist/disposable.mjs",
       "require": "./dist/disposable.cjs"
     },
+    "./classify": {
+      "import": "./dist/classify.mjs",
+      "require": "./dist/classify.cjs"
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",

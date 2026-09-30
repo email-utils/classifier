@@ -9,9 +9,16 @@ import {
 // preset, so the classifier splits an address exactly as the parser does. A
 // string it rejects gives `undefined`, which every lookup treats as an
 // address it knows nothing about (C2); that keeps quoted local parts, which
-// `practical` doesn't allow, away from the role check.
+// `practical` doesn't allow, away from the role check. Typo suggestions pass
+// `lenientTld`, since `practical` rejects the `.con` they exist to fix.
 
 const practical: SyntaxOptions = { preset: 'practical' };
+
+/** `practical` without the IANA TLD check. @internal */
+export const lenientTld: SyntaxOptions = {
+  preset: 'practical',
+  checkTld: false,
+};
 
 /**
  * The address's local part and domain, as written, or `undefined` for a
@@ -23,9 +30,10 @@ const practical: SyntaxOptions = { preset: 'practical' };
  */
 export function partsOf(
   email: string | ParsedAddress,
+  options: SyntaxOptions = practical,
 ): ParsedAddress | undefined {
   if (typeof email === 'string') {
-    const result = parseAddress(email, practical);
+    const result = parseAddress(email, options);
     return result.ok ? result.value : undefined;
   }
   if (
