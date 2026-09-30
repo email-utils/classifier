@@ -10,7 +10,8 @@ import {
 // string it rejects gives `undefined`, which every lookup treats as an
 // address it knows nothing about (C2); that keeps quoted local parts, which
 // `practical` doesn't allow, away from the role check. Typo suggestions pass
-// `lenientTld`, since `practical` rejects the `.con` they exist to fix.
+// `lenientTld`, since `practical` rejects the `.con` they exist to fix;
+// `partsOf` is only ever given one of the two.
 
 const practical: SyntaxOptions = { preset: 'practical' };
 
@@ -19,6 +20,13 @@ export const lenientTld: SyntaxOptions = {
   preset: 'practical',
   checkTld: false,
 };
+
+// `practical` allows no comments, quoted strings, whitespace, or non-ASCII,
+// with or without its TLD check, so an address it accepts is exactly
+// `local@domain`, within RFC 5321's 254 characters. A longer string is
+// turned away before the parse, which reads all of it, or as much as its
+// own looser `maxLength` allows where it has one.
+const maxLength = 254;
 
 /**
  * The address's local part and domain, as written, or `undefined` for a
@@ -33,6 +41,9 @@ export function partsOf(
   options: SyntaxOptions = practical,
 ): ParsedAddress | undefined {
   if (typeof email === 'string') {
+    if (email.length > maxLength) {
+      return undefined;
+    }
     const result = parseAddress(email, options);
     return result.ok ? result.value : undefined;
   }
