@@ -25,6 +25,15 @@ const nonAscii = /\P{ASCII}/u;
  * domain: `a@mailinator.com` and `a@x.mailinator.com` both are. The domain is
  * compared without case, and an internationalized domain by its A-label.
  *
+ * @example
+ * ```ts
+ * import { isDisposable } from '@email-utils/classifier/disposable';
+ *
+ * isDisposable('ada@mailinator.com'); // => true
+ * isDisposable('ada@x.mailinator.com'); // => true
+ * isDisposable('ada@gmail.com'); // => false
+ * ```
+ *
  * @throws TypeError when `email` is neither a string nor a parsed address.
  */
 export function isDisposable(email: string | ParsedAddress): boolean {

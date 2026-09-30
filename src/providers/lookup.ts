@@ -26,6 +26,16 @@ function domainIndex(): ReadonlyMap<string, ProviderInfo> {
  * Workspace, can't be told from the domain alone, so it returns `undefined`;
  * validator-dns's `detectProviderByMx` finds those by MX.
  *
+ * @example
+ * ```ts
+ * import { getProvider } from '@email-utils/classifier';
+ *
+ * getProvider('ada@googlemail.com');
+ * // => { id: 'gmail', canonicalDomain: 'gmail.com', subaddressSeparator: '+' }
+ * getProvider('news@ada.fastmail.com')?.id; // => 'fastmail'
+ * getProvider('ada@example.com'); // => undefined
+ * ```
+ *
  * @throws TypeError when `email` is neither a string nor a parsed address.
  */
 export function getProvider(

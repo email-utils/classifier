@@ -19,6 +19,7 @@ import type { ProviderId, ProviderInfo } from '../providers/types';
 /** The registry field a source backs. */
 export type ProviderRule = keyof Omit<ProviderInfo, 'id' | 'name' | 'kind'>;
 
+/** Where one registry fact about a provider comes from, and when it was checked. */
 export interface ProviderSource {
   rule: ProviderRule;
   /** The provider's own page for the fact; absent when it was read from DNS. */
@@ -31,7 +32,19 @@ export interface ProviderSource {
 
 const VERIFIED = '2026-09-29';
 
-/** Sources for every provider in the registry, by provider ID. */
+/**
+ * Sources for every provider in the registry, by provider ID.
+ *
+ * @example
+ * ```ts
+ * import { providerSources } from '@email-utils/classifier/sources';
+ *
+ * providerSources.gmail?.find(
+ *   (source) => source.rule === 'subaddressSeparator',
+ * );
+ * // => { url: 'https://support.google.com/mail/answer/12096' }
+ * ```
+ */
 export const providerSources: Readonly<
   Record<ProviderId, readonly ProviderSource[]>
 > = {

@@ -91,9 +91,12 @@ let defaultClassifier: Classifier | undefined;
  *
  * @example
  * ```ts
+ * import { classify } from '@email-utils/classifier/classify';
+ *
  * classify('ceo@mailinator.com');
- * // { provider: undefined, disposable: true, role: true, suggestion: undefined }
- * classify('ada@gmial.com').suggestion; // 'ada@gmail.com'
+ * // => { provider: undefined, disposable: true, role: true, suggestion: undefined }
+ * classify('ada@gmial.com').suggestion; // => 'ada@gmail.com'
+ * classify('ada@gmail.com', { maxKeyDistance: 0 }); // => throws TypeError
  * ```
  *
  * @throws TypeError when `email` is neither a string nor a parsed address,
@@ -116,8 +119,13 @@ export function classify(
  *
  * @example
  * ```ts
+ * import { createClassifier } from '@email-utils/classifier/classify';
+ *
  * const classifier = createClassifier({ domains: ['example-corp.com'] });
- * classifier.suggestCorrection('ada@example-crop.com'); // 'ada@example-corp.com'
+ * classifier.suggestCorrection('ada@example-crop.com');
+ * // => 'ada@example-corp.com'
+ * classifier.classify('ada@example-corp.com');
+ * // => { provider: undefined, suggestion: undefined }
  * ```
  *
  * @throws TypeError when `options` are malformed.

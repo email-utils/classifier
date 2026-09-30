@@ -69,10 +69,23 @@ export const targets: readonly string[] = [
   'tuta.com',
 ];
 
-// Widely used domains outside the registry that sit one edit from a target
-// and would otherwise be "corrected" to it. The `ignore` option replaces
-// them.
-/** @internal */
+/**
+ * Widely used domains outside the registry that sit one edit from a common
+ * one and would otherwise be "corrected" to it. The `ignore` option
+ * replaces them, so spread them in to add your own.
+ *
+ * @example
+ * ```ts
+ * import {
+ *   createClassifier,
+ *   defaultIgnore,
+ * } from '@email-utils/classifier/classify';
+ *
+ * defaultIgnore.includes('mail.com'); // => true
+ * createClassifier({ ignore: [...defaultIgnore, 'gmial.com'] })
+ *   .suggestCorrection('ada@gmial.com'); // => undefined
+ * ```
+ */
 export const defaultIgnore: readonly string[] = ['mail.com', 'email.com'];
 
 // Top-level domains that aren't in the IANA set, and the one each is a slip
@@ -190,9 +203,11 @@ export function createSuggester(
  *
  * @example
  * ```ts
- * suggestCorrection('ada@gmial.com'); // 'ada@gmail.com'
- * suggestCorrection('ada@hotmial.con'); // 'ada@hotmail.com'
- * suggestCorrection('ada@gmail.com'); // undefined
+ * import { suggestCorrection } from '@email-utils/classifier';
+ *
+ * suggestCorrection('ada@gmial.com'); // => 'ada@gmail.com'
+ * suggestCorrection('ada@hotmial.con'); // => 'ada@hotmail.com'
+ * suggestCorrection('ada@gmail.com'); // => undefined
  * ```
  *
  * @throws TypeError when `email` is neither a string nor a parsed address.

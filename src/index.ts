@@ -14,5 +14,14 @@ export type { ProviderId, ProviderInfo, ProviderKind } from './providers/types';
 export { isRoleAccount } from './role';
 export { suggestCorrection } from './suggest';
 
-/** The package name, for diagnostics. */
+/**
+ * The package name, for diagnostics.
+ *
+ * @example
+ * ```ts
+ * import { packageName } from '@email-utils/classifier';
+ *
+ * packageName; // => '@email-utils/classifier'
+ * ```
+ */
 export const packageName = '@email-utils/classifier';

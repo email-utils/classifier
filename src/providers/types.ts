@@ -16,6 +16,7 @@ export type ProviderId = string;
  */
 export type ProviderKind = 'personal' | 'business' | 'registrar';
 
+/** A mailbox provider in the registry: its domains, MX patterns, and local-part rules. */
 export interface ProviderInfo {
   id: ProviderId;
   name: string;
