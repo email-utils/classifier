@@ -53,24 +53,31 @@ function buildTable(rows: readonly string[]): Uint8Array {
       keys.push({ code: row.charCodeAt(i), x: i + stagger[y]!, y });
     }
   });
+  // The keys each one touches, by index, worked out once rather than on
+  // every step of every search: building a table is on a classifier's first
+  // use, so it counts against import cost.
+  const touches = keys.map((a) =>
+    keys.flatMap((b, j) =>
+      a !== b && Math.hypot(a.x - b.x, a.y - b.y) < touching ? [j] : [],
+    ),
+  );
   const table = new Uint8Array(128 * 128).fill(255);
   // Breadth-first from each key over the keys it touches.
-  for (const start of keys) {
-    const seen = new Map([[start, 0]]);
-    const queue = [start];
-    for (let next = queue.shift(); next !== undefined; next = queue.shift()) {
-      const steps = seen.get(next)!;
-      table[start.code * 128 + next.code] = steps;
-      for (const key of keys) {
-        if (
-          !seen.has(key) &&
-          Math.hypot(key.x - next.x, key.y - next.y) < touching
-        ) {
-          seen.set(key, steps + 1);
-          queue.push(key);
+  const steps = new Uint8Array(keys.length);
+  keys.forEach((start, s) => {
+    steps.fill(255);
+    steps[s] = 0;
+    const queue = [s];
+    for (let head = 0; head < queue.length; head++) {
+      const at = queue[head]!;
+      table[start.code * 128 + keys[at]!.code] = steps[at]!;
+      for (const next of touches[at]!) {
+        if (steps[next] === 255) {
+          steps[next] = steps[at]! + 1;
+          queue.push(next);
         }
       }
     }
-  }
+  });
   return table;
 }

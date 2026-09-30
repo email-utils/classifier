@@ -3,7 +3,7 @@ import type { ParsedAddress } from '@email-utils/validator-syntax';
 import { describe, expect, it } from 'vitest';
 import * as root from '../src';
 import { isDisposable } from '../src/disposable';
-import { blocklist } from '../src/disposable/data';
+import { blocklist, maxDots } from '../src/disposable/data';
 import { providers } from '../src/providers';
 
 function parsed(local: string, domain: string): ParsedAddress {
@@ -26,6 +26,13 @@ describe('isDisposable', () => {
   it('finds subdomains of a listed domain', () => {
     expect(isDisposable('ada@x.mailinator.com')).toBe(true);
     expect(isDisposable('ada@a.b.c.mailinator.com')).toBe(true);
+    const deepest = listed.find(
+      (domain) => domain.split('.').length - 1 === maxDots,
+    );
+    expect(isDisposable(parsed('ada', `${'a.'.repeat(100)}${deepest}`))).toBe(
+      true,
+    );
+    expect(isDisposable(parsed('ada', `.${deepest}`))).toBe(true);
   });
 
   it('matches whole labels only', () => {
@@ -88,6 +95,14 @@ describe('the vendored list', () => {
     for (const domain of listed) {
       expect(domain).toMatch(/^[a-z\d-]+(?:\.[a-z\d-]+)+$/);
     }
+  });
+
+  // isDisposable skips suffixes with more dots than this, so it must be the
+  // list's deepest domain.
+  it('records the most dots in a listed domain', () => {
+    expect(maxDots).toBe(
+      Math.max(...listed.map((domain) => domain.split('.').length - 1)),
+    );
   });
 
   // A mailbox provider's domain on the list would flag real people's

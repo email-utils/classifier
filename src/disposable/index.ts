@@ -12,7 +12,7 @@
  */
 import type { ParsedAddress } from '@email-utils/validator-syntax';
 import { partsOf } from '../address';
-import { blocklist } from './data';
+import { blocklist, maxDots } from './data';
 
 // Built on first use, so loading the entry costs one string literal.
 let domains: ReadonlySet<string> | undefined;
@@ -47,8 +47,14 @@ export function isDisposable(email: string | ParsedAddress): boolean {
   }
   domains ??= new Set(blocklist.split('\n'));
   // The list holds registrable domains, so `x.y.example` matches a listed
-  // `y.example`. The walk stops at two labels: no TLD is listed.
-  let suffix = domain;
+  // `y.example`. The walk starts at the longest suffix a listed domain could
+  // be, so a domain of many labels costs no more lookups than a short one,
+  // and stops at two labels: no TLD is listed.
+  let start = domain.length;
+  for (let dots = 0; dots <= maxDots && start !== -1; dots++) {
+    start = domain.lastIndexOf('.', start - 1);
+  }
+  let suffix = domain.slice(start + 1);
   let dot = suffix.indexOf('.');
   while (dot !== -1) {
     if (domains.has(suffix)) {

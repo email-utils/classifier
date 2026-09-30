@@ -1,0 +1,32 @@
+[
+  {
+    "name": "@email-utils/classifier",
+    "path": "dist/index.mjs",
+    "ignore": ["@email-utils/validator-syntax"],
+    "limit": "4 kB"
+  },
+  {
+    "name": "@email-utils/classifier/providers",
+    "path": "dist/providers.mjs",
+    "ignore": ["@email-utils/validator-syntax"],
+    "limit": "2.2 kB"
+  },
+  {
+    "name": "@email-utils/classifier/sources",
+    "path": "dist/sources.mjs",
+    "ignore": ["@email-utils/validator-syntax"],
+    "limit": "2.1 kB"
+  },
+  {
+    "name": "@email-utils/classifier/disposable",
+    "path": "dist/disposable.mjs",
+    "ignore": ["@email-utils/validator-syntax"],
+    "limit": "52 kB"
+  },
+  {
+    "name": "@email-utils/classifier/classify",
+    "path": "dist/classify.mjs",
+    "ignore": ["@email-utils/validator-syntax"],
+    "limit": "56 kB"
+  }
+]

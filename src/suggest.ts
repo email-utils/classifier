@@ -287,8 +287,17 @@ let current = new Uint16Array(256);
  * The optimal string alignment distance between `a` and `b`: insertions,
  * deletions, and swaps of neighboring characters, each one edit, and
  * substitutions, one edit for keys up to `maxKeyDistance` apart and two,
- * the same as a deletion and an insertion, for keys farther apart. Stops
- * early, returning `limit + 1`, once it must exceed `limit`.
+ * the same as a deletion and an insertion, for keys farther apart. Anything
+ * past `limit` comes back as more than `limit` but not exactly: `nearest`
+ * only needs to know it's too far. The lengths must be within `limit` of
+ * each other, as `nearest` checks.
+ *
+ * @remarks
+ * A cell more than `limit` from the diagonal is more than `limit` edits
+ * away, so each row fills only the band within `limit` of it, with
+ * `limit + 1` standing in on either side. That keeps the work linear in the
+ * domain's length, however long a `domains` option makes the targets. It
+ * stops early, returning `limit + 1`, once a row is all past `limit`.
  */
 function editDistance(
   a: string,
@@ -302,14 +311,20 @@ function editDistance(
     previous = new Uint16Array(size);
     current = new Uint16Array(size);
   }
-  for (let j = 0; j <= b.length; j++) {
+  // Row 0, and `limit + 1` past its band. Targets are longer than any
+  // `limit`, so the band never reaches the end of the row.
+  const over = limit + 1;
+  for (let j = 0; j < over; j++) {
     previous[j] = j;
   }
+  previous[over] = over;
   for (let i = 1; i <= a.length; i++) {
-    current[0] = i;
-    let rowMin = i;
+    const from = Math.max(1, i - limit);
+    const to = Math.min(b.length, i + limit);
+    current[from - 1] = from === 1 ? i : over;
+    let rowMin = current[from - 1]!;
     const ai = a.charCodeAt(i - 1);
-    for (let j = 1; j <= b.length; j++) {
+    for (let j = from; j <= to; j++) {
       const bj = b.charCodeAt(j - 1);
       let value = Math.min(
         previous[j]! + 1,
@@ -335,7 +350,10 @@ function editDistance(
       }
     }
     if (rowMin > limit) {
-      return limit + 1;
+      return over;
+    }
+    if (to < b.length) {
+      current[to + 1] = over;
     }
     [before, previous, current] = [previous, current, before];
   }

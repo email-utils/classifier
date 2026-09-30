@@ -1,14 +1,15 @@
-import type { ParsedAddress } from '@email-utils/validator-syntax';
 import { test } from 'vitest';
-import { suggestCorrection } from '../src';
-import { classify } from '../src/classify';
+import { classifyEntry, root } from './built';
+import { corpusParsed, corpusStrings, parsed } from './corpus';
 
-// classifier#10 targets 200 ns for a known domain and 25 µs for a miss.
-// Parsed addresses leave out validator-syntax's parse; the gates arrive with
-// the performance work (classifier#11).
-function parsed(local: string, domain: string): ParsedAddress {
-  return { local, domain, comments: [] };
-}
+// classifier#10 targets 200 ns for a known domain and 25 µs for a miss, on a
+// parsed address; a string adds validator-syntax's parse. `classify` has no
+// target of its own: it's the four lookups on one parse. The targets are
+// absolute, so no PR gate checks them: the nightly job does
+// (email-utils/meta#21), allowing 3× for a CI runner's speed.
+
+const { suggestCorrection } = root;
+const { classify } = classifyEntry;
 
 const known = parsed('ada', 'gmail.com');
 const typo = parsed('ada', 'gmial.com');
@@ -34,6 +35,16 @@ test('suggestCorrection', async ({ bench }) => {
   await bench('miss, string', () => {
     suggestCorrection('ada@example-company.co.uk');
   }).run();
+  await bench('corpus, strings', () => {
+    for (const email of corpusStrings) {
+      suggestCorrection(email);
+    }
+  }).run();
+  await bench('corpus, parsed', () => {
+    for (const email of corpusParsed) {
+      suggestCorrection(email);
+    }
+  }).run();
 });
 
 test('classify', async ({ bench }) => {
@@ -42,5 +53,15 @@ test('classify', async ({ bench }) => {
   }).run();
   await bench('miss', () => {
     classify(miss);
+  }).run();
+  await bench('corpus, strings', () => {
+    for (const email of corpusStrings) {
+      classify(email);
+    }
+  }).run();
+  await bench('corpus, parsed', () => {
+    for (const email of corpusParsed) {
+      classify(email);
+    }
   }).run();
 });

@@ -9198,3 +9198,11 @@ zzzzzzzzzzzzzz-8874.dynv6.net
 zzzzzzzzzzzzzz-969.dynv6.net
 zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz.loseyourip.com
 zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz.ooguy.com`;
+
+/**
+ * The most dots in a listed domain. A lookup starts at the suffix with this
+ * many, since no longer one can be listed.
+ *
+ * @internal
+ */
+export const maxDots: number = 3;
