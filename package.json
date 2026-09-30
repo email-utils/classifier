@@ -34,13 +34,18 @@
       "import": "./dist/sources.mjs",
       "require": "./dist/sources.cjs"
     },
+    "./disposable": {
+      "import": "./dist/disposable.mjs",
+      "require": "./dist/disposable.cjs"
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.cts",
   "files": [
-    "dist"
+    "dist",
+    "THIRD_PARTY_NOTICES.md"
   ],
   "sideEffects": false,
   "scripts": {
@@ -53,6 +58,7 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "bench": "vitest bench --run",
+    "update:disposable": "node scripts/update-disposable.mjs",
     "check:package": "publint && attw --pack . --profile node16",
     "pre-commit": "npm run lint && npm run format:check && npm run typecheck",
     "prepack": "npm run build"

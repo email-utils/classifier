@@ -1,10 +1,11 @@
 /**
  * `@email-utils/classifier`: facts and heuristics about an email address.
  *
- * Disposable-domain checks, typo suggestions, and `classify` land with the
- * remaining implementation issues; see
- * https://github.com/email-utils/classifier/issues. The provider registry
- * itself is `@email-utils/classifier/providers`.
+ * Typo suggestions and `classify` land with the remaining implementation
+ * issues; see https://github.com/email-utils/classifier/issues. The provider
+ * registry itself is `@email-utils/classifier/providers`, and `isDisposable`
+ * is `@email-utils/classifier/disposable`, so this entry never loads the
+ * disposable-domain list.
  *
  * @packageDocumentation
  */

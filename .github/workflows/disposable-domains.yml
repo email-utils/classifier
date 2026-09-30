@@ -1,0 +1,105 @@
+name: Disposable domains
+
+# Refreshes the vendored disposable-domain list from upstream weekly. When it
+# changed, opens (or updates) a fix(data) PR, so the squash commit cuts a
+# release, and queues it to merge once the PR gate passes. The gate's tests
+# hold the list to its shape and keep provider domains off it, so a bad
+# upstream change waits for a person.
+#
+# The PR comes from the org's release GitHub App: a PR opened with the
+# workflow's own token wouldn't trigger the PR gate, and auto-merge would
+# wait forever. This file is the classifier's own, not synced from meta, so
+# its action pins are bumped by hand along with templates/synced's.
+on:
+  schedule:
+    - cron: '41 4 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions: {}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  refresh:
+    name: refresh
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      contents: read # check out the package
+    env:
+      BRANCH: data/disposable-domains
+      UPSTREAM: https://github.com/disposable-email-domains/disposable-email-domains
+    steps:
+      - name: Create a token
+        id: token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.RELEASE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+          permission-contents: write # push the refresh branch
+          permission-pull-requests: write # open the PR and queue its merge
+
+      - name: Check out the package
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The update script uses only Node's built-ins, so no install.
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+
+      - name: Update the list
+        id: update
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          old=$(sed -n 's/^\/\/ at \([0-9a-f]\{40\}\) .*/\1/p' src/disposable/data.ts)
+          new=$(node scripts/update-disposable.mjs)
+          echo "old=$old" >> "$GITHUB_OUTPUT"
+          echo "new=$new" >> "$GITHUB_OUTPUT"
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "The list is already at ${new:0:7}." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open or update the PR
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+          APP_SLUG: ${{ steps.token.outputs.app-slug }}
+          REPO: ${{ github.repository }}
+          OLD: ${{ steps.update.outputs.old }}
+          NEW: ${{ steps.update.outputs.new }}
+        run: |
+          bot="${APP_SLUG}[bot]"
+          id=$(gh api "users/$bot" --jq .id)
+          git config user.name "$bot"
+          git config user.email "$id+$bot@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git commit -am "fix(data): update the disposable-domain list to ${NEW:0:7}"
+          git push --force \
+            "https://x-access-token:$GH_TOKEN@github.com/$REPO.git" "HEAD:refs/heads/$BRANCH"
+
+          title="fix(data): update the disposable-domain list to ${NEW:0:7}"
+          body="Refreshes \`src/disposable/data.ts\` from disposable-email-domains: [upstream changes]($UPSTREAM/compare/$OLD...$NEW).
+
+          Opened by the weekly Disposable domains workflow, and merges itself once the PR gate passes."
+          pr=$(gh pr list --repo "$REPO" --head "$BRANCH" --state open --json url --jq '.[0].url')
+          if [ -n "$pr" ]; then
+            gh pr edit "$pr" --title "$title" --body "$body"
+          else
+            pr=$(gh pr create --repo "$REPO" --base main --head "$BRANCH" --title "$title" --body "$body")
+          fi
+          gh pr merge --auto --squash "$pr"
+          echo "Updated ${OLD:0:7} → ${NEW:0:7}: $pr" >> "$GITHUB_STEP_SUMMARY"
