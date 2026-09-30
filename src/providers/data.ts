@@ -140,7 +140,17 @@ const fastmailDomains: readonly string[] = [
   'your-mail.com',
 ];
 
-/** Every provider the registry knows, in no particular order. */
+/**
+ * Every provider the registry knows, in no particular order.
+ *
+ * @example
+ * ```ts
+ * import { providers } from '@email-utils/classifier/providers';
+ *
+ * providers.find((provider) => provider.id === 'gmail');
+ * // => { name: 'Gmail', kind: 'personal', dotsSignificant: false }
+ * ```
+ */
 export const providers: readonly ProviderInfo[] = [
   {
     id: 'gmail',

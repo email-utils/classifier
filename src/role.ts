@@ -79,6 +79,15 @@ const roleLocalParts: ReadonlySet<string> = new Set([
  * `postmaster@`, `noreply@`, `support@`, and the like. The local part is
  * compared without case and without a `+` tag, so `Admin+alerts@` counts.
  *
+ * @example
+ * ```ts
+ * import { isRoleAccount } from '@email-utils/classifier';
+ *
+ * isRoleAccount('no-reply@example.com'); // => true
+ * isRoleAccount('Admin+alerts@example.com'); // => true
+ * isRoleAccount('ada@example.com'); // => false
+ * ```
+ *
  * @throws TypeError when `email` is neither a string nor a parsed address.
  */
 export function isRoleAccount(email: string | ParsedAddress): boolean {
