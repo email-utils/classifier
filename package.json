@@ -1,6 +1,6 @@
 {
   "name": "@email-utils/classifier",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0-rc.3",
   "description": "Classify email addresses: mailbox provider, disposable domains, role accounts, and typo suggestions.",
   "keywords": [
     "email",
