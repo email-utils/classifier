@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-rc.4](https://github.com/email-utils/classifier/compare/v1.0.0-rc.3...v1.0.0-rc.4) (2026-09-30)
+
+
+### Performance Improvements
+
+* bound lookups and add benchmarks and size budgets ([#36](https://github.com/email-utils/classifier/issues/36)) ([ae3baff](https://github.com/email-utils/classifier/commit/ae3baffc976565ac1e9df5954de9b1e8cf19907c))
+
 ## [1.0.0-rc.3](https://github.com/email-utils/classifier/compare/v1.0.0-rc.2...v1.0.0-rc.3) (2026-09-30)
 
 
