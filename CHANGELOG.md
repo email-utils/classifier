@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.0-rc.3](https://github.com/email-utils/classifier/compare/v1.0.0-rc.2...v1.0.0-rc.3) (2026-09-30)
+
+
+### Features
+
+* add suggestCorrection and the /classify entry ([#32](https://github.com/email-utils/classifier/issues/32)) ([8ff3795](https://github.com/email-utils/classifier/commit/8ff37956000bd9dcf9e0c3443ae92e6efc80be5f))
+* **disposable:** add isDisposable and the /disposable entry ([#30](https://github.com/email-utils/classifier/issues/30)) ([04d901c](https://github.com/email-utils/classifier/commit/04d901c777282eb93e9f1d8483b6c2c10251c769))
+
 ## [1.0.0-rc.2](https://github.com/email-utils/classifier/compare/v1.0.0-rc.1...v1.0.0-rc.2) (2026-09-29)
 
 
