@@ -2,10 +2,10 @@ import { test } from 'vitest';
 import { classifyEntry, root } from './built';
 import { corpusParsed, corpusStrings, parsed } from './corpus';
 
-// classifier#10 targets 200 ns for a known domain and 25 µs for a miss, on a
-// parsed address; a string adds validator-syntax's parse. `classify` has no
-// target of its own: it's the four lookups on one parse. The targets are
-// absolute, so no PR gate checks them: the nightly job does
+// classifier#10 targets a known domain and a miss on a parsed address, in
+// `task.meta.bench` (bench/meta.ts); a string adds validator-syntax's parse.
+// `classify` has no target of its own: it's the four lookups on one parse.
+// The targets are absolute, so no PR gate checks them: the nightly job does
 // (email-utils/meta#21), allowing 3× for a CI runner's speed.
 
 const { suggestCorrection } = root;
@@ -16,7 +16,11 @@ const typo = parsed('ada', 'gmial.com');
 const miss = parsed('ada', 'example-company.co.uk');
 const tldTypo = parsed('ada', 'gmial.con');
 
-test('suggestCorrection', async ({ bench }) => {
+test('suggestCorrection', async ({ bench, task }) => {
+  task.meta.bench = {
+    'known domain': { p50: 200, source: 'classifier#10' },
+    miss: { p50: 25_000, source: 'classifier#10' },
+  };
   await bench('known domain', () => {
     suggestCorrection(known);
   }).run();
