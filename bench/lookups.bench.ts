@@ -2,16 +2,23 @@ import { test } from 'vitest';
 import { disposable, root } from './built';
 import { corpusParsed, corpusStrings, parsed } from './corpus';
 
-// The targets are for a parsed address; a string adds validator-syntax's
-// parse, about 130–250 ns, which has no target here (classifier#26). They're
+// Each test gives its benches' targets in `task.meta.bench` (bench/meta.ts).
+// They're for a parsed address; a string adds validator-syntax's parse,
+// about 130–250 ns, which has no target here (classifier#26). They're
 // absolute, so no PR gate checks them: the nightly job does
 // (email-utils/meta#21), allowing 3× for a CI runner's speed.
 
 const { getProvider, isRoleAccount } = root;
 const { isDisposable } = disposable;
 
-test('getProvider', async ({ bench }) => {
-  // ≤ 50 ns (classifier#8, restated on a parsed address in classifier#26).
+test('getProvider', async ({ bench, task }) => {
+  // classifier#8's, restated on a parsed address in classifier#26.
+  const target = { p50: 50, source: 'classifier#26' };
+  task.meta.bench = {
+    'known domain': target,
+    subdomain: target,
+    miss: target,
+  };
   const known = parsed('ada', 'gmail.com');
   // A one-label subdomain on a provider with subdomain addressing takes a
   // second lookup.
@@ -41,8 +48,14 @@ test('getProvider', async ({ bench }) => {
   }).run();
 });
 
-test('isRoleAccount', async ({ bench }) => {
-  // ≤ 100 ns (classifier#8, restated on a parsed address in classifier#26).
+test('isRoleAccount', async ({ bench, task }) => {
+  // classifier#8's, restated on a parsed address in classifier#26.
+  const target = { p50: 100, source: 'classifier#26' };
+  task.meta.bench = {
+    role: target,
+    'role with a tag': target,
+    person: target,
+  };
   const role = parsed('postmaster', 'example.com');
   const tagged = parsed('Admin+alerts', 'example.com');
   const person = parsed('ada.lovelace', 'example.com');
@@ -70,8 +83,15 @@ test('isRoleAccount', async ({ bench }) => {
   }).run();
 });
 
-test('isDisposable', async ({ bench }) => {
-  // ≤ 200 ns with the parent-domain walk (classifier#9).
+test('isDisposable', async ({ bench, task }) => {
+  // With the parent-domain walk. An internationalized domain has no target:
+  // it goes through the URL parser to A-labels first.
+  const target = { p50: 200, source: 'classifier#9' };
+  task.meta.bench = {
+    'listed domain': target,
+    subdomain: target,
+    miss: target,
+  };
   const listed = parsed('ada', 'mailinator.com');
   const subdomain = parsed('ada', 'a.b.mailinator.com');
   const miss = parsed('ada', 'mail.example-company.co.uk');
