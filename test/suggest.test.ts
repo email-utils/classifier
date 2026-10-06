@@ -61,6 +61,11 @@ describe('suggestCorrection', () => {
     );
   });
 
+  it('never fixes a TLD onto a domain in defaultIgnore', () => {
+    expect(suggestCorrection('ada@mail.con')).toBeUndefined();
+    expect(suggestCorrection('ada@email.cmo')).toBeUndefined();
+  });
+
   it('corrects the TLD before measuring the name', () => {
     expect(suggestCorrection('ada@gmail.con')).toBe('ada@gmail.com');
     expect(suggestCorrection('ada@gmial.con')).toBe('ada@gmail.com');

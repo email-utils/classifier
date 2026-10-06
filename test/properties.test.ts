@@ -422,4 +422,27 @@ describe('documented invariants', () => {
       { numRuns: 300 },
     );
   });
+
+  it('createClassifier never corrects toward a domain in ignore', () => {
+    fc.assert(
+      fc.property(
+        fc.oneof(typoAddress, anyEmail),
+        anyOptions,
+        (email, options) => {
+          const suggestion = createClassifier(options).suggestCorrection(email);
+          if (suggestion === undefined) {
+            return;
+          }
+          // A parsed address can have an @ in its domain, so the local part
+          // is sliced off rather than split on.
+          const { local } = partsOf(email, lenientTld)!;
+          const domain = suggestion.slice(local.length + 1);
+          const ignore = [...(options.ignore ?? defaultIgnore), domain];
+          const ignoring = createClassifier({ ...options, ignore });
+          expect(ignoring.suggestCorrection(email)).not.toBe(suggestion);
+        },
+      ),
+      { numRuns: 300 },
+    );
+  });
 });
