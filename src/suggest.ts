@@ -151,6 +151,7 @@ const defaults: SuggestSettings = {
 /** What a suggester measures with. */
 interface Matcher {
   known: ReadonlySet<string>;
+  ignored: ReadonlySet<string>;
   all: readonly string[];
   keys: Uint8Array;
   maxEdits: number;
@@ -174,6 +175,7 @@ export function createSuggester(
       ...ignore,
       ...domains,
     ]),
+    ignored,
     all: [...domains, ...targets].filter(
       (domain) => isTarget(domain) && !ignored.has(domain),
     ),
@@ -197,7 +199,8 @@ export function createSuggester(
  * as one edit, and so does a letter typed for one on a neighboring QWERTY
  * key; one typed for a letter farther away counts as two. Names of three
  * letters or fewer, like `me.com`, are never guessed at. A TLD that isn't in the IANA set but is a common slip
- * for `.com`, `.net`, or `.org` is fixed on any domain. Unlike the other
+ * for `.com`, `.net`, or `.org` is fixed on any domain but those in
+ * {@link defaultIgnore}, which are never corrected toward. Unlike the other
  * lookups, a string with an unknown TLD is still read, since those are what
  * the TLD fix is for.
  *
@@ -223,7 +226,7 @@ function suggest(
   email: string | ParsedAddress,
   matcher: Matcher,
 ): string | undefined {
-  const { known } = matcher;
+  const { known, ignored } = matcher;
   const parts = partsOf(email, lenientTld);
   if (parts === undefined) {
     return undefined;
@@ -248,6 +251,11 @@ function suggest(
     return corrected === undefined ? undefined : `${parts.local}@${corrected}`;
   }
   const fixed = domain.slice(0, dot + 1) + tldTypos[tld]!;
+  // An ignored domain isn't corrected toward by a TLD fix either: `mail.con`
+  // gets no suggestion, rather than `mail.com` or, measured on, `gmail.com`.
+  if (ignored.has(fixed)) {
+    return undefined;
+  }
   const isKnown =
     known.has(fixed) || getProvider({ ...parts, domain: fixed }) !== undefined;
   return `${parts.local}@${(isKnown ? undefined : nearest(fixed, matcher)) ?? fixed}`;

@@ -188,6 +188,12 @@ describe('createClassifier', () => {
         'ada@gmial.com',
       ),
     ).toBeUndefined();
+    expect(classify('ada@mail.con').suggestion).toBeUndefined();
+    expect(
+      createClassifier({ ignore: ['Example.com'] }).suggestCorrection(
+        'ada@example.con',
+      ),
+    ).toBeUndefined();
   });
 
   it('measures key distance on the chosen keyboard', () => {
