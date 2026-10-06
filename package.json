@@ -92,6 +92,6 @@
     "lefthook": true
   },
   "dependencies": {
-    "@email-utils/validator-syntax": "^1.0.0-rc.1"
+    "@email-utils/validator-syntax": "^1.0.0-rc.4"
   }
 }
