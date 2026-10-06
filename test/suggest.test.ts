@@ -187,8 +187,8 @@ describe('the suggestion data', () => {
 
   // A disposable service's own domain is what its user meant, so one near a
   // target mustn't be "corrected" to it. Two edits turned yopmail.com into
-  // hotmail.com, and any substitution counting as one turned lastmail.com
-  // into fastmail.com. These are the listed domains one edit from a target,
+  // ymail.com, and any substitution counting as one turned lastmail.com into
+  // fastmail.com. These are the listed domains one edit from a target,
   // all typo-squats; a refresh that adds another fails here for a person to
   // judge.
   it('corrects only typo-like domains on the disposable list', () => {

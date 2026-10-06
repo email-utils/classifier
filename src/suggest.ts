@@ -55,7 +55,6 @@ export const targets: readonly string[] = [
   'yahoo.in',
   'yahoo.com.br',
   'yahoo.com.au',
-  'aol.co.uk',
   'mail.ru',
   'inbox.ru',
   'list.ru',
@@ -264,7 +263,7 @@ function suggest(
 // The first target closest to `domain`, within `maxEdits`. Known domains
 // never get here, so none is at distance 0, and the first at distance 1
 // ends the search. More than one edit reaches too far by default: two
-// turned distinct disposable services like yopmail.com into hotmail.com,
+// turned distinct disposable services like yopmail.com into ymail.com,
 // which test/suggest.test.ts guards against.
 function nearest(domain: string, matcher: Matcher): string | undefined {
   let best: string | undefined;
