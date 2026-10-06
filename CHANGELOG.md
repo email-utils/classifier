@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.0-rc.5](https://github.com/email-utils/classifier/compare/v1.0.0-rc.4...v1.0.0-rc.5) (2026-10-06)
+
+
+### Bug Fixes
+
+* **data:** update the disposable-domain list to 1aac72a ([#40](https://github.com/email-utils/classifier/issues/40)) ([cb1c4c0](https://github.com/email-utils/classifier/commit/cb1c4c0d2f47a7ba2f22d82bc8035249d8fadd5f))
+* **deps:** bump @email-utils/validator-syntax from 1.0.0-rc.1 to 1.0.0-rc.3 in the email-utils group ([#38](https://github.com/email-utils/classifier/issues/38)) ([0d475ca](https://github.com/email-utils/classifier/commit/0d475ca49817d359c09caf05336393f97fe1e531))
+* **deps:** bump @email-utils/validator-syntax to 1.0.0-rc.4 ([#51](https://github.com/email-utils/classifier/issues/51)) ([d170379](https://github.com/email-utils/classifier/commit/d170379132b0094e4217f87aeedbc48cc4d52511))
+* **typo:** never fix a TLD onto an ignored domain ([#48](https://github.com/email-utils/classifier/issues/48)) ([bec063b](https://github.com/email-utils/classifier/commit/bec063bd8e0be46c4cecb9c9b380a371eadc4e64))
+
 ## [1.0.0-rc.4](https://github.com/email-utils/classifier/compare/v1.0.0-rc.3...v1.0.0-rc.4) (2026-09-30)
 
 
