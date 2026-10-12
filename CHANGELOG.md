@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-rc.6](https://github.com/email-utils/classifier/compare/v1.0.0-rc.5...v1.0.0-rc.6) (2026-10-12)
+
+
+### Bug Fixes
+
+* **data:** update the disposable-domain list to 627edfd ([#54](https://github.com/email-utils/classifier/issues/54)) ([13e3046](https://github.com/email-utils/classifier/commit/13e3046dfbad828162d02af5113efda151c4124c))
+
 ## [1.0.0-rc.5](https://github.com/email-utils/classifier/compare/v1.0.0-rc.4...v1.0.0-rc.5) (2026-10-06)
 
 
